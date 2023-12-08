@@ -1,37 +1,24 @@
-CFLAGS = -Wall -Werror -Wextra -pedantic
+CC := gcc
+AR := ar
+CFLAGS := -Wall -Werror -Wextra -pedantic
+ARFLAGS := rcs
+QUEUE_SRC := $(wildcard *queue*.c)
+GRAPH_SRC := $(wildcard graph*.c)
+QUEUE_OBJ := $(QUEUE_SRC:.c=.o)
+GRAPH_OBJ := $(GRAPH_SRC:.c=.o)
 
-libqueues.a: dequeue.o enqueue.o queue_delete.o queue_create.o
-	ar rcs $@ $^
+.PHONY: all clean
 
-libgraphs.a: graph_add_edge.o graph_add_vertex.o graph_display.o graph_delete.o graph_create.o
-	ar rcs $@ $^
+all: libqueues.a libgraphs.a
 
-graph_add_edge.o: graph_add_edge.c
-	gcc -c graph_add_edge.c $(CFLAGS)
+libqueues.a: $(QUEUE_OBJ)
+	@$(AR) $(ARFLAGS) $@ $^
 
-graph_add_vertex.o: graph_add_vertex.c
-	gcc -c graph_add_vertex.c $(CFLAGS)
+libgraphs.a: $(GRAPH_OBJ)
+	@$(AR) $(ARFLAGS) $@ $^
 
-graph_display.o: graph_display.c
-	gcc -c graph_display.c $(CFLAGS)
-
-graph_delete.o: graph_delete.c
-	gcc -c graph_delete.c $(CFLAGS)
-
-graph_create.o: graph_create.c
-	gcc -c graph_create.c $(CFLAGS)
-
-dequeue.o: dequeue.c
-	gcc -c dequeue.c $(CFLAGS)
-
-enqueue.o: enqueue.c
-	gcc -c enqueue.c $(CFLAGS)
-
-queue_delete.o: queue_delete.c
-	gcc -c queue_delete.c $(CFLAGS)
-
-queue_create.o: queue_create.c
-	gcc -c queue_create.c $(CFLAGS)
+%.o: %.c
+	@$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -f *queue*.o graph*.o libqueues.a libgraphs.a
+	@rm *.o *.a
